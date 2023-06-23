@@ -7,12 +7,21 @@ import { UserAddOutlined } from "@ant-design/icons";
 function App() {
   // State
   const [open, setOpen] = useState(false);
-  const [user, setUsers] = useState("");
+  const [form] = Form.useForm();
+  const [users, setUsers] = useState("");
   // useEffect
   useEffect(() => {
     fetchUsers();
-  }, [user]);
-
+  }, [users]);
+  const handleEdit = (item) => {
+    console.log(item);
+    form.setFieldsValue({
+      name: item.name,
+      email: item.email,
+      phone: item.phoneNumber,
+    });
+    setOpen(!open);
+  };
   const fetchUsers = async () => {
     try {
       const response = await axios.get("http://localhost:4000");
@@ -35,9 +44,18 @@ function App() {
       console.error(error);
     }
   };
+  // const handleUpdate = async (userId) => {
+  //   try {
+  //     const response = await axios.get(`http://localhost:4000/getId/${userId}`);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   // Action Modal
   const handleCancel = () => {
     setOpen(false);
+    form.resetFields();
   };
   const showModal = () => {
     setOpen(true);
@@ -69,9 +87,7 @@ function App() {
       render: (item, record) => (
         <Space>
           <Button onClick={() => console.log("Up to date")}>Delete</Button>
-          <Button onClick={(e) => console.log("Up to date", record._id)}>
-            Update
-          </Button>
+          <Button onClick={() => handleEdit(record)}>Update</Button>
         </Space>
       ),
     },
@@ -100,7 +116,7 @@ function App() {
             </Button>,
           ]}
         >
-          <Form onFinish={handleSubmit}>
+          <Form onFinish={handleSubmit} form={form}>
             <Form.Item label="Name" name="name" rules={[{ required: true }]}>
               <Input name="name" />
             </Form.Item>
@@ -111,7 +127,7 @@ function App() {
               <Input name="phone" />
             </Form.Item>
             <Form.Item label="Birth" name="birth" rules={[{ required: true }]}>
-              <DatePicker />
+              <DatePicker format="YYYY-MM-DD" />
             </Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
@@ -120,7 +136,7 @@ function App() {
         </Modal>
       </div>
       <div>
-        <Table columns={columns} dataSource={user}></Table>
+        <Table columns={columns} dataSource={users}></Table>
       </div>
     </div>
   );

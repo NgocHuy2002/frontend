@@ -24,16 +24,16 @@ function App() {
   const { Search } = Input;
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const [searchValue, setSearchValue] = useState(null);
+  const [searchValue, setSearchValue] = useState('');
   const [user, setUser] = useState("");
   const [users, setUsers] = useState("");
   // useEffect
   useEffect(() => {
     fetchUsers(searchValue);
   }, [users, searchValue]);
-  const fetchUsers = async (searchValue) => {
+  const fetchUsers = async (e) => {
     try {
-      const response = await axios.get(`http://localhost:4000/${searchValue}`);
+      const response = await axios.get(`http://localhost:4000/${e}`);
       const usersWithKeys = response.data.map((user, index) => ({
         ...user,
         birth: moment(user.birth).format("YYYY-MM-DD"),
@@ -158,10 +158,6 @@ function App() {
             </Button>
             <Search
               placeholder="input search text"
-              // onChange={(value) => {
-              //   setSearchValue(value);
-              //   console.log(value);
-              // }}
               onSearch={(value) => {
                 setSearchValue(value);
               }}
